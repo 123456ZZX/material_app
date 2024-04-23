@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- 打电话、发短信功能 -->
+    <meta name="format-detection" content="telephone=yes"/>
+    <!-- 禁止缩放 -->
+    <!-- 从 iOS 11 开始，如果你希望状态栏覆盖Webview，必须在 viewport meta标签中 包含 viewport-fit=cover: -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,viewport-fit=cover" />
+    <!-- 屏蔽favicon -->
+    <link rel="icon" href="data:image/ico;base64,aWNv">
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet' />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <style>
+      body {
+        background-color:#f2f3f4;
+        height: 100%;
+      }
+      html {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <strong
+        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to
+        continue.</strong
+      >
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <script src="./static/sm4/s4.js"></script>
+    <script src="./static/sm4/byte&string.js"></script>
+    <script src="./static/sm4/smutils.js"></script>
+    <!-- 原生框架中提供hdec-mobile脚本，位于平台工程的platform_www下，调用原生接口需要，勿删除 -->
+    <script src="hdec-mobile.js"></script>
+  </body>
+</html>

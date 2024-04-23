@@ -1,0 +1,45 @@
+diff --git a/src/views/BZList/index.vue b/src/views/BZList/index.vue
+index c6925a9..1b61dda 100644
+--- a/src/views/BZList/index.vue
++++ b/src/views/BZList/index.vue
+@@ -111,6 +111,7 @@ import {
+ } from 'fawkes-mobile-lib'
+ import WaterCard from './waterCard.vue'
+ import request from '@/utils/request'
++import rhumbDistance from '@turf/rhumb-distance'
+ export default {
+ 	components: {
+ 		[NavBar.name]: NavBar,
+@@ -150,7 +151,7 @@ export default {
+ 				pumpType: ptype,
+ 			}).then((res) => {
+ 				this.GsList = [...this.GsList, ...res.data]
+-				this.AllList = [...this.AllList, ...this.GsList]
++				this.AllList.push(...this.GsList)
+ 				console.log(this.GsList)
+ 			}).finally(() => {
+ 				Toast.clear()
+@@ -164,7 +165,6 @@ export default {
+ 				ptype,
+ 			}).then((res) => {
+ 				this.WsList = [...this.WsList, ...res.data]
+-				this.AllList = [...this.AllList, ...this.WsList]
+ 				console.log(this.WsList)
+ 			}).finally(() => {
+ 				Toast.clear()
+@@ -178,7 +178,6 @@ export default {
+ 				ptype,
+ 			}).then((res) => {
+ 				this.RnList = [...this.RnList, ...res.data]
+-				this.AllList = [...this.AllList, ...this.RnList]
+ 				// console.log(this.RnList[0])
+ 			}).finally(() => {
+ 				Toast.clear()
+@@ -216,6 +215,7 @@ export default {
+ 			this.getGsData('供水')
+ 			this.getWsData('污水')
+ 			this.getRnData('雨水')
++
+ 		},
+ 		onClear() {
+ 			// 复用刷新接口

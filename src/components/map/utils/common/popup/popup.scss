@@ -1,0 +1,41 @@
+.swan-popup {
+  max-width: none !important;
+
+  .mapboxgl-popup-tip {
+    //气泡箭头样式
+    border-top-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .mapboxgl-popup-content {
+    //气泡主体样式
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+  }
+
+  .popup-container {
+    min-width: 100px;
+  }
+
+  .popup-item {
+    height: 30px;
+    line-height: 30px;
+  }
+
+  .popup-text {
+    font-size: 16px;
+    color: #555555;
+    vertical-align: middle;
+    overflow: hidden;
+  }
+
+  .popup-key {
+    float: left;
+    max-width: 100px;
+    margin-right: 12px;
+  }
+
+  .popup-value {
+    float: right;
+    max-width: 200px;
+  }
+}

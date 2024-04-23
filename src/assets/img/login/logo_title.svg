@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="173px" height="38px" viewBox="0 0 173 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>凤翎建管</title>
+    <defs>
+        <linearGradient x1="-34.5289823%" y1="56.6394591%" x2="112.222033%" y2="45.7128903%" id="linearGradient-1">
+            <stop stop-color="#00E8C7" offset="0%"></stop>
+            <stop stop-color="#027AFF" offset="100%"></stop>
+        </linearGradient>
+        <text id="text-2" font-family="PingFangSC-Medium, PingFang SC" font-size="40" font-weight="400" line-spacing="53" letter-spacing="5.05263158">
+            <tspan x="285" y="355">凤翎建管</tspan>
+        </text>
+    </defs>
+    <g id="app" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="app登录" transform="translate(-286.000000, -321.000000)" fill-rule="nonzero">
+            <g id="凤翎建管">
+                <use fill="transparent" xlink:href="#text-2"></use>
+                <use fill="url(#linearGradient-1)" xlink:href="#text-2"></use>
+                <use fill="transparent" fill-opacity="1" xlink:href="#text-2"></use>
+            </g>
+        </g>
+    </g>
+</svg>
