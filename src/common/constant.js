@@ -157,6 +157,13 @@ export const ALL_APP_LIST = [
     src: require('@assets/img/homepage/纠错工单.png'),
     path: '/Correction',
     isFixed: false, //是否固定
+  },
+  {
+    id: 17,
+    title: '物资管理',
+    src: require('@assets/img/homepage/纠错工单.png'),
+    path: '/Material',
+    isFixed: false, //是否固定
   }
 ]
 

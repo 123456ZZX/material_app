@@ -213,7 +213,7 @@ const routes = [
     path: '/CreateForm',
     name: 'CreateForm',
     component: () => import('@/views/CreateForm/index.vue'),
-  },  
+  },
   //表单开始-------------------------------------------------------------------
   // 普通表单
   {
@@ -277,7 +277,7 @@ const routes = [
     name: 'detailFlawOrder',
     component: () => import('@/views/FlawsManagement/detail.vue'),//威派格工单详情
   },
-  
+
   // 流程主子表-新增
   {
     path: '/reimburseDetailList/index',
@@ -520,6 +520,13 @@ const routes = [
     name: 'LeakDetectionForm',
     component: () => import('@/views/PipeNetLeakDetection/LeakDetectionForm.vue'),
   },
+  //物资管理
+  {
+    path: '/Material',
+    name: 'Material',
+    component: () => import('@/views/Material/index.vue'),
+  },
+
 ]
 
 // export function createRouter () {
