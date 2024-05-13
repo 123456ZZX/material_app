@@ -1,143 +1,72 @@
-<!-- '巡检任务卡片（执行中）' -->
 <template>
-  <div class="InfoCard" @click="execute(cardInfo)">
-    <!-- 巡检标题 -->
+  <div class="InfoCard" @click="execute(inWarehouseInfo)">
     <div class="topSide">
       <div class="topIcon">
         <img :src="imageUrl" alt="" />
       </div>
-      <div class="bottomTitle">{{ cardInfo.taskName }}</div>
+<!--      验收单标题-->
+      <div class="bottomTitle">订单编号:{{ inWarehouseInfo.orderId }}</div>
     </div>
-    <!-- 巡检信息 -->
     <div class="bottomSide">
       <div class="commonStyle restTime">
-        <img src="../../assets/img/inspection/剩余时间.png" alt="" />
-        <div class="titleText">剩余时间:</div>
-        <fm-count-down :time="timeRest">
-          <template #default="timeData">
-            <span class="block">{{ timeData.days }}</span>
-            <span class="colon">天</span>
-            <span class="block">{{ timeData.hours }}</span>
-            <span class="colon"> : </span>
-            <span class="block">{{ timeData.minutes }}</span>
-          </template>
-        </fm-count-down>
+        <img src='../../../assets/img/material/下单时间.png' alt="" />
+        <div class="titleText">下单时间:</div>
+        <span class="taskStartTime">{{ this.inWarehouseInfo.createDate}}</span>
       </div>
-      <div v-if="cardInfo.taskType == '管廊巡检'" class="commonStyle keyPoint">
-        <img src="../../assets/img/inspection/关键点.png" alt="" />
-        <div class="titleText">巡检对象:</div>
-        <div class="bigNumber">{{ keyPoints.key }}</div>
-        <div class="smallText">/</div>
-        <div class="smallText">{{ keyPoints.total }}</div>
-        <div class="smallText">{{ '个' }}</div>
+      <div class="commonStyle keyPoint">
+        <img src='../../../assets/img/material/供货商.png' alt="" />
+        <div class="titleText">供货商:</div>
+        <span class="taskStartTime">{{ this.inWarehouseInfo.suppilerName}}</span>
       </div>
-      <div v-if="cardInfo.taskType != '管廊巡检'" class="commonStyle keyPoint">
-        <img src="../../assets/img/inspection/关键点.png" alt="" />
-        <div class="titleText">关键点:</div>
-        <div class="bigNumber">{{ keyPoints.key }}</div>
-        <div class="smallText">/</div>
-        <div class="smallText">{{ keyPoints.total }}</div>
-        <div class="smallText">{{ '个' }}</div>
-      </div>
-      <div v-if="cardInfo.taskType != '管廊巡检'" class="commonStyle progressBar">
-        <img src="../../assets/img/inspection/管线覆盖率.png" alt="" />
-        <div class="titleText">管线覆盖率</div>
-        <!--  第一层，固定进度条宽度 -->
-        <div :style="styleVar" class="progressWidth">
-          <!-- 第二层，计算得到的实际比率宽度 -->
-          <div :style="styleVar" class="colorWidth">
-            <!-- 第三层，动画 -->
-            <div :style="styleVar" class="progressAnimate"></div>
-          </div>
-        </div>
-        <div class="bluePercent">{{ Math.round(percentNum * 10000) / 100 + '%' }}</div>
+      <div class="commonStyle keyPoint">
+        <img src='../../../assets/img/material/供货商.png' alt="" />
+        <div class="titleText">水厂:</div>
+        <span class="taskStartTime">{{ this.inWarehouseInfo.warehouseName}}</span>
       </div>
     </div>
-    <div></div>
+    <div class="twoButton">
+      <div @click="materialInWarehouse(inWarehouseInfo)">物资</div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: {
-    cardInfo: {
-      require: true,
-      type: Object,
-      default: () => {
-        return {
-          // 顶部标题
-          taskName: '巡检标题',
-          // 类型(人巡、车巡、管廊、泵站)
-          taskType: '人巡',
-          // 结束时间，用于倒计时
-          taskEndTime: "2022-08-25 12:00:00",
-          // 关键点个数与总数
-          reportRate: "7/77",
-          // 管线覆盖率
-          coverage: "77.77%",
-        }
-      }
-    },
+  name:'InWarehouseCardEle',
+  props:{
+    inWarehouseInfo:{}
   },
   computed: {
-    // 右上角图片地址
     imageUrl() {
-      return require(`../../assets/img/inspection/${this.cardInfo.taskType || '人巡'}.png`)
-    },
-    // 倒计时
-    timeRest() {
-      return new Date(this.cardInfo.taskEndTime).getTime() - new Date().getTime()
-    },
-    // 关键点个数与总数
-    keyPoints() {
-      let arr = this.cardInfo.reportRate ? this.cardInfo.reportRate.split('/') : [0, 0]
-      return {
-        key: arr[0],
-        total: arr[1],
-      }
-    },
-    // 管线覆盖率
-    percentNum() {
-      let percent = this.cardInfo.coverage || '0%'
-      let pointNum = this.toPoint(percent);
-      return pointNum
+      return require(`../../../assets/img/material/物资.png`)
     },
   },
-  data() {
-    return {
-      styleVar: {
-        // 进度条全长168px
-        '--totalWidth': '168px',
-        '--barWidth': '100px',
-        '--colorBlue': 'blue',
-      },
-    }
-  },
-  created() {
-    this.styleVar['--barWidth'] = parseInt(168 * this.percentNum) + 'px'
-  },
-  methods: {
+  methods:{
     execute(item) {
       this.$emit('execute', item)
     },
-    // 百分比转换成小数
-    toPoint(percent) {
-      var str = percent.replace("%", "");
-      str = str / 100;
-      return str;
-    }
+
+    //跳转入库物资列表页面
+    materialInWarehouse(inWarehouseInfo){
+      this.$storage.set('inWarehouseId',inWarehouseInfo.id)
+      this.$storage.set('warehouseId',inWarehouseInfo.warehouseId)
+      this.$router.push({
+        path: '/material/inWarehouseMaterialList',
+      })
+    },
   },
 }
 </script>
 
-<style lang="less" scoped>
+
+<style scoped lang='less' scoped>
 .InfoCard {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
   width: 690px;
-  height: 334px;
+  height: 300px;
   margin: 24px auto;
   border-radius: 16px;
   box-shadow: 0px 4px 16px 0px rgba(104, 115, 127, 0.06);
@@ -182,16 +111,37 @@ export default {
       // background-color: green;
     }
   }
+  // 验收，物资详情按钮
+  .twoButton {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    height: 72px;
+    font-size: 28px;
+    color: #1b67d8;
+    font-family: PingFangSC-Semibold, PingFang SC;
+
+    .centerLine {
+      height: 70%;
+      width: 2px;
+      background-color: #eee;
+    }
+  }
 
   .bottomSide {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: space-around;
     width: 100%;
     height: 218px;
     font-size: 28px;
     font-family: PingFangSC-Semibold, PingFang SC;
     // background-color: #96ff9b;
+
+    .taskStartTime {
+      color: #2062c4;
+    }
 
     img {
       width: 32px;
@@ -243,7 +193,7 @@ export default {
       // background-color: rgb(126, 255, 216);
 
       .bigNumber {
-        padding-bottom: 6px;
+        padding-bottom: 14px;
         font-size: 32px;
         font-weight: 600;
         color: #2062c4;

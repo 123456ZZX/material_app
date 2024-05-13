@@ -526,6 +526,72 @@ const routes = [
     name: 'Material',
     component: () => import('@/views/Material/index.vue'),
   },
+  //物资-验收单详情页
+  {
+    path: '/material/checkInfo',
+    name: 'checkInfo',
+    component: () => import('@/views/Material/Check/CheckInfo.vue'),
+  },
+  //物资-验收单物资列表
+  {
+    path: '/material/checkMaterialList',
+    name: 'checkMaterialList',
+    component: () => import('@/views/Material/Check/checkMaterialList.vue'),
+  },
+  //物资-验收单物资详情页
+  {
+    path: '/material/CheckMaterialInfo',
+    name: 'CheckMaterialInfo',
+    component: () => import('@/views/Material/Check/CheckMaterialInfo.vue'),
+  },
+  //物资-入库单列表
+  {
+    path: '/material/inWarehouseList',
+    name: 'inWarehouseList',
+    component: () => import('@/views/Material/InWarehouse/InfoCardInWarehouse.vue'),
+  },
+
+  //物资-入库物资列表
+  {
+    path: '/material/inWarehouseMaterialList',
+    name: 'inWarehouseMaterialList',
+    component: () => import('@/views/Material/InWarehouse/inWarehouseMaterialList.vue'),
+  },
+
+  //物资-入库物资详情
+  {
+    path: '/material/InWarehouseMaterialInfo',
+    name: 'InWarehouseMaterialInfo',
+    component: () => import('@/views/Material/InWarehouse/InWarehouseMaterialInfo.vue'),
+  },
+
+  //物资-盘库物资列表
+  {
+    path: '/material/makeWarehouseMaterialList',
+    name: 'makeWarehouseMaterialList',
+    component: () => import('@/views/Material/MakeWarehouse/MakeWarehouseMaterialList.vue'),
+  },
+
+  //物资-盘库物资信息（设置实盘数量页）
+  {
+    path: '/material/MakeWarehouseMaterialInfo',
+    name: 'MakeWarehouseMaterialInfo',
+    component: () => import('@/views/Material/MakeWarehouse/MakeWarehouseMaterialInfo.vue'),
+  },
+
+  //物资-出库物资列表页
+  {
+    path: '/material/outWarehouseMaterialList',
+    name: 'outWarehouseMaterialList',
+    component: () => import('@/views/Material/OutWarehouse/OutWarehouseMaterialList.vue'),
+  },
+
+  //物资-出库物资详情
+  {
+    path: '/material/outWarehouseMaterialInfo',
+    name: 'outWarehouseMaterialInfo',
+    component: () => import('@/views/Material/OutWarehouse/OutWarehouseMaterialInfo.vue'),
+  },
 
 ]
 

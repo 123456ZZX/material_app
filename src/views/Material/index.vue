@@ -5,48 +5,28 @@
     <div class="content">
 
       <img :src="bgSrc" class="bgImg" :style="{ '--bgSrcLeft': bgSrcLeft }" />
-<!--      <img :src="bgSrc" class="bgImg"-->
-<!--        :class="selectedTab == '验收' ? 'left' : selectedTab == '出库'||selectedTab == '入库' ? 'middle' : 'right'" />-->
+
       <fm-tabs v-model="selectedTab" @tab-click="changeType" line-width="60px">
         <fm-tab name="验收" :label="check"></fm-tab>
         <fm-tab name="入库" :label="inWarehouse"></fm-tab>
         <fm-tab name="出库" :label="outWarehouse"></fm-tab>
         <fm-tab name="盘库" :label="makeWarehouse"></fm-tab>
       </fm-tabs>
-      <!-- 选择框 -->
-<!--      <div class="selectStyle">-->
-<!--        <Select :selectData="checkStateOptions" :selValue="checkState" color="white" @getValue="getValue"></Select>-->
-<!--        <Select :selectData="warehouseLocationOptions" :selValue="warehouseLocation" color="white" @getValue="getValue"></Select>-->
-<!--      </div>-->
+
       <div class="main-container">
         <template>
-          <!-- 下拉刷新 -->
-          <fm-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="onRefresh">
-            <!-- 无数据 -->
-            <template v-if="taskList.length == 0 && !loading">
-              <div class="no-data-img">
-                <fm-image fit="cover" :src="require('@/assets/img/no-data-img.png')" />
-              </div>
-              <div class="no-data-text">
-                <div class="no-data-text-descripe">暂无数据</div>
-              </div>
-            </template>
-            <!-- 列表 -->
-            <fm-list v-else v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :offset="0">
+
+            <fm-list :offset="0">
               <div>
-                <div v-for="(item, index) in taskList" :key="index">
-                  <!-- 执行中卡片 -->
-                  <InfoCardinWarehouse :cardInfo="item" @execute="execute" v-if="selectedTab == '执行中'"></InfoCardinWarehouse>
-                  <!-- 未巡检卡片 -->
-                  <InfoCardNotAndDone :cardInfo="item" cardType="not" @transmitEvent="transmitEvent"
-                    v-else-if="selectedTab == '未巡检'" @startEvent="startEvent"></InfoCardNotAndDone>
-                  <!-- 已完成卡片 -->
-                  <InfoCardNotAndDone :cardInfo="item" cardType="done" @execute="handleView" v-else>
-                  </InfoCardNotAndDone>
+                <div>
+                  <InfoCardCheck  cardType="not" v-if="selectedTab == '验收'" ></InfoCardCheck>
+                  <InfoCardInWarehouse  @execute="execute" v-if="selectedTab == '入库'"></InfoCardInWarehouse>
+                  <InfoCardOutWarehouse  @execute="execute" v-if="selectedTab == '出库'"></InfoCardOutWarehouse>
+                  <InfoCardMakeWarehouse  @execute="execute" v-if="selectedTab == '盘库'"></InfoCardMakeWarehouse>
                 </div>
               </div>
             </fm-list>
-          </fm-pull-refresh>
+
         </template>
       </div>
     </div>
@@ -70,13 +50,12 @@ import {
   Icon,
   Dialog,
 } from 'fawkes-mobile-lib'
-// 执行中信息卡片
-import InfoCardinWarehouse from './InfoCardWorking.vue'
-// 未巡检、已完成信息卡片
-import InfoCardNotAndDone from './InfoCardNotAndDone.vue'
-// 下拉选择框
-import Select from './Select.vue'
-import { queryTaskList } from './api'
+
+
+import InfoCardCheck from './Check/InfoCardCheck.vue'
+import InfoCardInWarehouse from './InWarehouse/InfoCardInWarehouse.vue'
+import InfoCardMakeWarehouse from './MakeWarehouse/InfoCardMakeWarehouse.vue'
+import InfoCardOutWarehouse from './OutWarehouse/InfoCardOutWarehouse.vue'
 
 export default {
   name: 'Inspection',
@@ -95,36 +74,13 @@ export default {
     [NoticeBar.name]: NoticeBar,
     [Icon.name]: Icon,
     [Dialog.name]: Dialog,
-    InfoCardinWarehouse,
-    InfoCardNotAndDone,
-    Select,
+    InfoCardCheck,
+    InfoCardInWarehouse,
+    InfoCardMakeWarehouse,
+    InfoCardOutWarehouse,
   },
   data() {
     return {
-      taskList: [],
-      activeKey: 0,
-      searchValue: '', // 搜索文字
-      tabs: ['执行中', '未巡检', '已完成'],
-      pageSize: 10,
-      refreshing: false, // 下拉刷新是否处于加载中状态，下拉时组件会自动设置true
-      loading: false, // 列表加载更多时控制加载状态，加载时组件会自动设置为true，加载完成后需手动设置为false
-      finished: false, // 列表加载更多时控制加载状态，全部加载完成时需设置为true
-      currentRate: 0,
-      checkStateOptions: [
-        { type: 1, name: '入库完成', value: 'in_warehouse_finish' },
-        { type: 1, name: '入库进行中', value: 'in_warehouse_going' },
-        { type: 1, name: '入库未完成', value: 'in_warehouse_unfinish' },
-      ],
-      warehouseLocationOptions: [
-        { type: 2, name: '1号库房', value: '1号库房' },
-        { type: 2, name: '2号库房', value: '2号库房' },
-        { type: 2, name: '3号库房', value: '3号库房' },
-        { type: 2, name: '4号库房', value: '4号库房' },
-        { type: 2, name: '5号库房', value: '5号库房' },
-      ],
-      checkState: '验收单状态',
-      warehouseLocation: '库房名称',
-      // tab切换标题
       selectedTab: '验收',
       check: '验收',
       inWarehouse: '入库',
@@ -133,21 +89,8 @@ export default {
       toast: null
     }
   },
-  created() {
-    // 初始化下拉框
-    this.checkState = this.checkStateOptions[0].value
-    this.warehouseLocation = this.warehouseLocationOptions[0].value
-  },
-  mounted() {
-    this.toast = Toast.loading({
-      message: '加载中...',
-      forbidClick: true,
-      duration: 0
-    })
-    this.onRefresh()
-  },
-  computed: {
 
+  computed: {
     bgSrcLeft() {
       let left = ''
       switch (this.selectedTab) {
@@ -186,231 +129,42 @@ export default {
       }
       return src
     },
-    text() {
-      return this.currentRate.toFixed(0) + '%'
-    },
   },
   methods: {
-    // select框选择回调
-    getValue(type, name, value) {
-      if (type === 1) {
-        this.checkState = value
-      } else if (type === 2) {
-        this.warehouseLocation = value
-      }
-      this.toast = Toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        duration: 0
-      })
-      this.onRefresh()
-    },
-    // 重置列表page,list值
-    pageReset() {
-      this.pageNum = 1
-      this.taskList = []
-    },
     // tab切换回调
     changeType(name, title) {
-      this.toast = Toast.loading({
-        message: '加载中...',
-        forbidClick: true,
-        duration: 0
-      })
+      // this.toast = Toast.loading({
+      //   message: '加载中...',
+      //   forbidClick: true,
+      //   duration: 0
+      // })
       this.selectedTab = name
-      this.onRefresh()
-    },
-    onClear() {
-      // 复用刷新接口
-      // this.searchParams.reimburseName = ''
-      this.onRefresh()
-    },
-    // 搜索
-    onSearch(val) {
-      // this.searchParams.reimburseName = val
-      // 复用刷新接口
-      this.onRefresh()
-    },
-    // 页面加载/下拉刷新
-    onRefresh() {
-      this.pageReset()
-      this.loading = true
-      this.finished = false
-      this.getList()
-    },
-    // 列表加载更多
-    onLoad() {
-      this.pageNum = this.pageNum + 1
-      this.getList()
-    },
-    // 获取列表数据
-    getList() {
-      let startTime = ''
-      switch (this.checkState) {
-        case '近一周':
-          startTime = this.$dayjs().subtract(7, 'day').format('YYYY-MM-DD HH:mm:ss')
-          break;
-        case '近一月':
-          startTime = this.$dayjs().subtract(1, 'month').format('YYYY-MM-DD HH:mm:ss')
-          break;
-        case '近三月':
-          startTime = this.$dayjs().subtract(3, 'month').format('YYYY-MM-DD HH:mm:ss')
-          break
-        default:
-          startTime = ''
-          break
-      }
-      let searchParams = {
-        page: this.pageNum,
-        size: this.pageSize,
-        taskStartTime: startTime,
-        taskEndTime: this.$dayjs().format('YYYY-MM-DD HH:mm:ss')
-      }
-      if (this.warehouseLocation != '全部类型') {
-        searchParams.taskType = this.warehouseLocation
-      }
-      switch (this.selectedTab) {
-        case '执行中':
-          searchParams.taskStatus = '1'
-          break
-        case '未巡检':
-          searchParams.taskStatus = '0'
-          break
-        case '已完成':
-          searchParams.taskStatus = '2'
-          break
-        default:
-          searchParams.taskStatus = '1'
-          break
-      }
-      queryTaskList(searchParams)
-        .then((res) => {
-          if (res.data) {
-            console.log('巡检任务', res);
-            this.taskList = [...this.taskList, ...res.data.records]
-            console.log('this.taskList: ', this.taskList);
-            // this.taskList.push(JSON.parse(JSON.stringify(this.taskList[0])))
-            // this.taskList[this.taskList.length - 1].taskType = '管廊'
-            // this.taskList.push({
-            //   id:'122333',
-            //   taskType: '管廊',
-            //   taskName: '2023年2月管廊巡检',
-            //   taskEndTime: "2023-02-28 12:00:00",
-            // })
-            if (res.data.current >= res.data.pages) {
-              this.finished = true
-            }
-            this.refreshing = false
-          }
-        })
-        .catch(() => {
-          this.finished = true
-        })
-        .finally(() => {
-          this.toast.close()
-          this.toast = null
-          this.loading = false
-        })
-    },
-    /*打开新增页面*/
-    add() {
-      this.$router.push({
-        name: 'CommonOneFormIndex',
-        params: { type: 'add' }
-      })
-    },
-
-    /*已完成任务，打开任务查看页面*/
-    handleView(item) {
-      if (item.taskType === '人巡' || item.taskType === '车巡') {
-        this.$router.push({
-          name: 'InspectionManage',
-          query: {
-            isView: true,
-            taskId: item.id,
-            taskType: item.taskType
-          },
-        })
-        return
-      }
-      if (item.taskType === '管廊' || item.taskType === '管廊巡检') {
-        // 任务数据存储在本地，避免数据缺失
-        localStorage.setItem('galleryTaskData', null)
-        localStorage.setItem('galleryTaskData', JSON.stringify(item))
-        // 已完成的管廊巡检任务，点进去，不是进入GalleryInspection，
-        // 而是直接进入StartGalleryInspection，同时用 isView 控制一些按钮可点击状态
-        this.$router.push({
-          name: 'StartGalleryInspection',
-          query: {
-            isView: true,
-          },
-        })
-      }
-    },
-    // 转发
-    transmitEvent(item) {
-      console.log(item)
-    },
-    // 开始
-    // 对于未巡检的任务第一次进入巡检任务需要更新任务状态
-    startEvent(item) {
-      this.execute(item, true)
+      // this.onRefresh()
     },
     //执行
     execute(item, isNew = false) {
-      if (item.taskType === '人巡' || item.taskType === '车巡') {
-        this.$router.push({
-          name: 'InspectionManage',
-          query: {
-            name: '执行',
-            taskId: item.id,
-            isNew: isNew,
-            taskType: item.taskType
-          },
-        })
-        return
-      }
-      if (item.taskType === '管廊' || item.taskType === '管廊巡检') {
-        // 任务数据存储在本地，避免数据缺失
-        localStorage.setItem('galleryTaskData', null)
-        localStorage.setItem('galleryTaskData', JSON.stringify(item))
-        this.$router.push({
-          name: 'GalleryInspection',
-        })
-      }
+      // if (item.taskType === '人巡' || item.taskType === '车巡') {
+      //   this.$router.push({
+      //     name: 'InspectionManage',
+      //     query: {
+      //       name: '执行',
+      //       taskId: item.id,
+      //       isNew: isNew,
+      //       taskType: item.taskType
+      //     },
+      //   })
+      //   return
+      // }
+      // if (item.taskType === '管廊' || item.taskType === '管廊巡检') {
+      //   // 任务数据存储在本地，避免数据缺失
+      //   localStorage.setItem('galleryTaskData', null)
+      //   localStorage.setItem('galleryTaskData', JSON.stringify(item))
+      //   this.$router.push({
+      //     name: 'GalleryInspection',
+      //   })
+      // }
     },
 
-    /*打开编辑*/
-    handleEdit(row) {
-      this.$router.push({
-        name: 'CommonOneFormIndex',
-        params: {
-          type: 'edit',
-          id: row.id,
-        },
-      })
-    },
-    /*打开编辑*/
-    handleDelete(row) {
-      Dialog.confirm({
-        title: '提示',
-        message: '确认是否删除?',
-      })
-        .then(() => {
-          let idList = []
-          idList.push(row.id)
-
-          deleteCommonForm(idList).then((res) => {
-            if (res.status) {
-              Toast('删除成功')
-              this.onRefresh()
-            } else {
-              Toast(res.message)
-            }
-          })
-        })
-        .catch(() => { })
-    },
   },
 }
 </script>
@@ -461,6 +215,7 @@ export default {
     }
   }
 }
+
 // 顶部标题背景色
 /deep/.fm-nav-bar__content {
   background-color: transparent;
