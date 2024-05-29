@@ -143,6 +143,8 @@ export default {
         locationId: this.outWarehouseInfoForm.locationId,
         materialId: this.outWarehouseInfoForm.materialId,
         outCount: this.outWarehouseInfoForm.outCount,
+        manageType: this.outWarehouseInfoForm.manageType,
+        materialType: this.outWarehouseInfoForm.materialType,
         remark: 'app直接出库'
       }
 
@@ -155,23 +157,7 @@ export default {
         }
       })
     },
-    //扫码
-    scan() {
-      if (typeof yuanchu != 'undefined') {
-        yuanchu.scanner.openScanner((res) => {
-          alert(res)
-          alert(res === '111')
-        })
-      } else {
 
-      }
-    },
-    san2() {
-      fawkes.plugins.scanner.openScanner((res) => {
-        alert(res)
-        alert(res === '111')
-      })
-    }
   }
 }
 </script>

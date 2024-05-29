@@ -27,9 +27,9 @@ export function selectLocationInfo(params) {
 /**
  * 查询出入库订单记录表的条数
  */
-export function selectCountByOrderDetailId(params) {
+export function selectMaterialCount(params) {
   return request({
-    url: `${baseUrl}/second/inWarehouseOrder/selectCountByOrderDetailId/`+params.id,
+    url: `${baseUrl}/second/material/selectMaterialCount/`+params.id,
     method: 'get',
   })
 }
@@ -63,6 +63,16 @@ export function saveOutCount(params) {
   })
 }
 
+/**
+ * 根据userid查询用户信息
+ * @param id
+ */
+export function selectUserInfoByUserId(id) {
+  return request({
+    url: '/xasw-material/second/user/selectUserInfoByUserId/'+id,
+    method: 'get',
+  })
+}
 
 /**
  * 查询当前库位下的物资信息
@@ -82,8 +92,9 @@ export function getOutWarehouseMaterialList(params) {
  */
 export function getWarehouseThierarchy(params) {
   return request({
-    url: `${baseUrl}/second/warehouse/getWarehouseThierarchy/`+params.warehouseId,
+    url: `${baseUrl}/second/warehouse/getWarehouseThierarchy`,
     method: 'get',
+    params: params
   })
 }
 

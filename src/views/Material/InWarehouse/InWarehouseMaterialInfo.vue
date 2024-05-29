@@ -327,7 +327,7 @@ export default {
 .form-container {
   height: calc(100% - 46px);
   overflow-y: scroll;
-  margin-top: 40px; /* 增加顶部内边距 */
+  //margin-top: 40px; /* 增加顶部内边距 */
 }
 
 .button-style {

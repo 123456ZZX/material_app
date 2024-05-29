@@ -3,7 +3,7 @@
     <div class="main-container">
       <template>
         <!-- 下拉刷新 -->
-        <fm-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="onRefresh">
+        <fm-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="init">
           <!--          <fm-button @click='check'>扫码</fm-button>-->
           <!-- 无数据 -->
           <template v-if="makeWarehouseList.length == 0 && !loading">
@@ -55,21 +55,52 @@ export default {
       refreshing: false, // 下拉刷新是否处于加载中状态，下拉时组件会自动设置true
       loading: false, // 列表加载更多时控制加载状态，加载时组件会自动设置为true，加载完成后需手动设置为false
       finished: false, // 列表加载更多时控制加载状态，全部加载完成时需设置为true
-      toast: null
+      toast: null,
+      //权限控制
+      currentUserInfo: [],
+      warehouseList: ''
     }
   },
   created() {
-    // todo 权限获取当前登陆人 水厂
-  },
-  mounted() {
     this.toast = Toast.loading({
       message: '加载中...',
       forbidClick: true,
       duration: 0,
     })
-    this.onRefresh()
+    this.init();
   },
   methods: {
+    init(){
+      //获取当前登陆人的权限信息
+      let params = {
+        id: this.$storage.get('userId')
+      }
+      apis.selectUserInfoByUserId(params.id).then(res => {
+        if (res.status) {
+          this.currentUserInfo = res.data
+          //判断返回结果数
+          if (this.currentUserInfo.length == 0) {
+            // 没有访问权限，显示提示信息
+            // this.toast.close()
+            this.toast = null
+            return Toast('您没有访问权限，请联系管理员。')
+          } else {
+            //查询权限信息
+            let adminCount = this.currentUserInfo.filter(res => res.type === 'admin')
+            if (adminCount.length == 0) {
+              //普通用户权限，获取全部可操作的水厂
+              this.warehouseList = this.currentUserInfo.map(item => item.warehouseId).join(',');
+            }
+            //管理员权限，不需要设置
+            this.onRefresh();
+          }
+        }
+      }).finally(()=>{
+        this.loading = false
+        this.finished = true
+        this.refreshing = false
+      })
+    },
     // 页面加载/下拉刷新
     onRefresh() {
       this.loading = true
@@ -83,8 +114,9 @@ export default {
         size:9999,
         //已下发状态盘库信息
         state: 'make_warehouse_issue',
-        warehouseNameId:'',//todo 根据登录人映射
-        makeWarehouseName:''
+        // warehouseNameId:'',//todo 根据登录人映射
+        // makeWarehouseName:''
+        ids :this.warehouseList
       }
 
       apis.queryMakeWarehouseList(params).then(res=>{

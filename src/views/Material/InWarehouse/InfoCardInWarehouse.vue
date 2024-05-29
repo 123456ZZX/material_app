@@ -3,7 +3,7 @@
     <div class="main-container">
       <template>
         <!-- 下拉刷新 -->
-        <fm-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="onRefresh">
+        <fm-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="init">
           <!-- 无数据 -->
           <template v-if="checkList.length == 0 && !loading">
             <div class="no-data-img">
@@ -24,7 +24,7 @@
           >
             <div>
               <div v-for="(item, index) in checkList" :key="index">
-                <InWarehouseCardEle :inWarehouseInfo="item" @execute="execute(item)"></InWarehouseCardEle>
+                <InWarehouseCardEle :inWarehouseInfo="item"></InWarehouseCardEle>
               </div>
             </div>
           </fm-list>
@@ -41,6 +41,7 @@ Vue.use(Vuex)
 import { queryCheckList } from './api'
 import InWarehouseCardEle from './InWarehouseCardEle.vue'
 import { Toast } from 'fawkes-mobile-lib'
+import * as apis from '../Check/api'
 export default {
   name : 'InfoCardInWarehouse',
   components: {
@@ -53,21 +54,54 @@ export default {
       refreshing: false, // 下拉刷新是否处于加载中状态，下拉时组件会自动设置true
       loading: false, // 列表加载更多时控制加载状态，加载时组件会自动设置为true，加载完成后需手动设置为false
       finished: false, // 列表加载更多时控制加载状态，全部加载完成时需设置为true
-      toast: null
+      toast: null,
+
+      //权限控制
+      currentUserInfo: [],
+      warehouseList: ''
     }
   },
   created() {
-    // todo 权限获取当前登陆人 水厂
-  },
-  mounted() {
     this.toast = Toast.loading({
       message: '加载中...',
       forbidClick: true,
-      duration: 0,
+      duration: 0
     })
-    this.onRefresh()
+    this.init();
   },
   methods: {
+    init(){
+      //获取当前登陆人的权限信息
+      let params = {
+        id: this.$storage.get('userId')
+      }
+      apis.selectUserInfoByUserId(params.id).then(res => {
+        if (res.status) {
+          this.currentUserInfo = res.data
+          //判断返回结果数
+          if (this.currentUserInfo.length == 0) {
+            // 没有访问权限，显示提示信息
+            // this.toast.close()
+            this.toast = null
+            return Toast('您没有访问权限，请联系管理员。')
+          } else {
+            //查询权限信息
+            let adminCount = this.currentUserInfo.filter(res => res.type === 'admin')
+            if (adminCount.length == 0) {
+              //普通用户权限，获取全部可操作的水厂
+              this.warehouseList = this.currentUserInfo.map(item => item.warehouseId).join(',');
+              this.$storage.set('inWarehouseIds',this.warehouseList)
+            }
+            //管理员权限，不需要设置
+            this.onRefresh();
+          }
+        }
+      }).finally(()=>{
+        this.loading = false
+        this.finished = true
+        this.refreshing = false
+      })
+    },
     // 页面加载/下拉刷新
     onRefresh() {
       this.loading = true
@@ -80,7 +114,7 @@ export default {
         page:1,
         size:9999,
         checkState: 'in_warehouse_going',
-        // warehouseNameId:''//todo 根据登录人映射
+        ids: this.warehouseList
       }
       queryCheckList(params).then(res=>{
         if(res.status) {
@@ -90,22 +124,11 @@ export default {
         }
       }).catch(() => {
         this.finished = true
+      }).finally(()=>{
+        this.toast.close()
+        this.toast = null
       })
-        .finally(() => {
-          this.toast.close()
-          this.toast = null
-          this.loading = false
-        })
-
     },
-    //执行
-    execute(item) {
-      // console.log(item)
-      // this.$store.commit('setObjectQuery', {
-      //   checkId: item.id,
-      // })
-    },
-
   }
 }
 </script>

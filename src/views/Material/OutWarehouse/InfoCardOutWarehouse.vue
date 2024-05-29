@@ -1,8 +1,8 @@
 <template>
   <div class='button-container'>
-    <fm-button type='primary' @click='scan'>扫码出库</fm-button>
+    <fm-button type='primary' :disabled = isLogin @click='scan'>扫码出库</fm-button>
     <div style='height: 100px'></div>
-    <fm-button type='primary' @click='changeOutWarehouse'>点选出库</fm-button>
+    <fm-button type='primary' :disabled = isLogin @click='changeOutWarehouse'>点选出库</fm-button>
     <fm-form>
       <fm-popup :visible.sync='show' round position='bottom'>
         <fm-cascader
@@ -48,150 +48,156 @@ export default {
       options: [],
       makeWarehouseList: [],
       loading: false,
-      finished: false
+      finished: false,
+      //权限控制
+      currentUserInfo: [],
+      warehouseList: '',
+      isLogin: false
     }
   },
   created() {
-    // todo 权限获取当前登陆人 水厂
-  },
-  mounted() {
+
     this.toast = Toast.loading({
       message: '加载中...',
       forbidClick: true,
       duration: 0
     })
-    this.onRefresh()
+
+    this.$storage.remove('selectedOptionShelf')
+    this.$storage.remove('selectedOptionLocation')
+    this.$storage.remove('selectedOptionWarehouse')
+    this.$storage.remove('selectedOptionMaterial')
+    this.$storage.remove('isMaterialScan')
+    this.init();
   },
   methods: {
-    //扫码出库，判断扫描结果：
-    // 如果为库房，物资列表页面显示全部物资信息；
-    // 如果为货架，物资列表页面显示货架中的全部物资信息；
-    // 如果扫描物资信息，直接跳转物资详情页面，选择出库数量
-    //扫码，扫码出库，如果扫描的是物资上的二维码，这个二维码中的数据其实是订单的明细id，新加了一个表为物资入库订单记录表，
-    // 其中有订单的明细id，订单明细对应物资入库的位置，以及入库的数量，扫码就去这个表里查询订单明细id，得到物资的位置数量等信息，还加一个字段是出库数量，扫码后得到是所有的订单对应的入库的物资的位置以及剩余数量，
-    //PC端在领料或出库时判断当前的信息是否存在于新表中，存在的话就将已出库数量新增
-    //在物资进行入库时，将物资数量和信息存储到订单入库表中，
+    init(){
+      //获取当前登陆人的权限信息
+      let params = {
+        id: this.$storage.get('userId')
+      }
+      apis.selectUserInfoByUserId(params.id).then(res => {
+        if (res.status) {
+          this.currentUserInfo = res.data
+          //判断返回结果数
+          if (this.currentUserInfo.length == 0) {
+            // 没有访问权限，显示提示信息
+            this.isLogin = true
+            this.toast = null
+            return Toast('您没有访问权限，请联系管理员。')
+          } else {
+            //查询权限信息
+            let adminCount = this.currentUserInfo.filter(res => res.type === 'admin')
+            if (adminCount.length == 0) {
+              //普通用户权限，获取全部可操作的水厂
+              this.warehouseList = this.currentUserInfo.map(item => item.warehouseId).join(',');
+              this.$storage.set('userWarehouseIds',this.warehouseList)
+            }
+            //管理员权限，不需要设置
+            this.onRefresh();
+          }
+        }
+      }).finally(()=>{
+        this.loading = false
+        this.finished = true
+        this.refreshing = false
+      })
+    },
+
+
+    //扫码出库，判断扫描结果
     scan() {
 
       // let params = {
-      //   id: '1778608284316852226'
+      //   id: '20230605001'
       // }
-      //
-      // this.$storage.remove('selectedOptionShelf')
-      // this.$storage.remove('selectedOptionLocation')
-      // this.$storage.remove('selectedOptionWarehouse')
-
-      //判断是否为物资条码
-      // apis.selectCountByOrderDetailId(params).then(res => {
+      // //判断是否为物资条码
+      // apis.selectMaterialCount(params).then(res => {
       //   if (res.status && res.data != 0) {
       //     //跳转物资显示页面，显示订单入库记录表的物资数量
       //     this.$storage.set('isMaterialScan', 1)
-      //
-      //     this.$storage.set('selectedOptionShelf', params.id)
+      //     this.$storage.set('selectedOptionMaterial', params.id)
+      //     // this.$storage.set('selectedOptionWarehouse', '1778601350805184514')
       //     this.$router.push({
       //       path: '/material/outWarehouseMaterialList'
       //     })
+      //   } else {
+      //     Toast('请扫描库房，库位或物资条码！')
       //   }
       // })
 
-      //
-      // apis.selectCountByshelfId(params).then(res => {
-      //   if (res.status && res.data != 0) {
-      //     //查询出库位信息
-      //     apis.selectShelfInfo(params).then(res => {
-      //       if (res.status) {
-      //         //存储库房水厂信息
-      //         this.$storage.set('selectedOptionLocation', res.data.locationId)
-      //         this.$storage.set('selectedOptionWarehouse', res.data.warehouseId)
-      //       }
-      //     })
-      //
-      //     //跳转物资显示页面，显示货架的全部物资信息
-      //     // 跳转到物资设置出库数量页面
-      //     this.$storage.set('isMaterialScan', 0)
-      //     this.$storage.set('selectedOptionShelf', params.id)
-      //     this.$router.push({
-      //       path: '/material/outWarehouseMaterialList'
-      //     })
-      //   }
-      // })
-
-
-      if (typeof yuanchu != 'undefined') {
-        yuanchu.scanner.openScanner((res) => {
-          let params = {
-            id: res
-          }
-          this.$storage.remove('selectedOptionShelf')
-          this.$storage.remove('selectedOptionLocation')
-          this.$storage.remove('selectedOptionWarehouse')
-
-          //查询是否为库房条码
-          apis.selectCountByLocationId(params).then(res => {
-            if (res.status && res.data != 0) {
-              // 跳转物资显示页面，显示库房的全部物资信息
-              //查询库房信息
-              apis.selectLocationInfo(params).then(res => {
-                if (res.status) {
-                  //存储库房水厂id
-                  this.$storage.set('selectedOptionWarehouse', res.data.warehouseId)
-                }
-              })
-              this.$storage.set('selectedOptionLocation', params.id)
-              this.$storage.set('isMaterialScan', 0)
-
-              this.$router.push({
-                path: '/material/outWarehouseMaterialList'
-              })
-            } else {
-              //判断是否为库位条码，库位条码存储库位和库房和水厂id
-              apis.selectCountByshelfId(params).then(res => {
-                if (res.status && res.data != 0) {
-                  //查询出库位信息
-                  apis.selectShelfInfo(params).then(res => {
-                    if (res.status) {
-                      //存储库房水厂信息
-                      this.$storage.set('selectedOptionLocation', res.data.locationId)
-                      this.$storage.set('selectedOptionWarehouse', res.data.warehouseId)
-                    }
-                  })
-                  //跳转物资显示页面，显示货架的全部物资信息
-                  // 跳转到物资设置出库数量页面
-                  this.$storage.set('isMaterialScan', 0)
-                  this.$storage.set('selectedOptionShelf', params.id)
-                  this.$router.push({
-                    path: '/material/outWarehouseMaterialList'
-                  })
-                } else {
-                  //TODO 判断是否为物资条码
-                  apis.selectCountByOrderDetailId(params).then(res => {
-                    if (res.status && res.data != 0) {
-                      //跳转物资显示页面，显示订单入库记录表的物资数量
-                      this.$storage.set('isMaterialScan', 1)
-
-                      this.$storage.set('selectedOptionShelf', params.id)
-                      this.$router.push({
-                        path: '/material/outWarehouseMaterialList'
-                      })
-                    } else {
-                      Toast('请扫描库房，库位或物资条码！')
-                    }
-                  })
-                }
-              })
+        if (typeof yuanchu != 'undefined') {
+          yuanchu.scanner.openScanner((res) => {
+            let params = {
+              id: res
             }
+
+            //查询是否为库房条码
+            apis.selectCountByLocationId(params).then(res => {
+              if (res.status && res.data != 0) {
+                this.$storage.set('selectedOptionLocation', params.id)
+                this.$storage.set('isMaterialScan', 0)
+                // 跳转物资显示页面，显示库房的全部物资信息
+                //查询库房信息
+                apis.selectLocationInfo(params).then(res => {
+                  if (res.status) {
+                    //存储库房水厂id
+                    this.$storage.set('selectedOptionWarehouse', res.data.warehouseId)
+                    this.$router.push({
+                      path: '/material/outWarehouseMaterialList'
+                    })
+                  }
+                })
+              } else {
+                //判断是否为库位条码，库位条码存储库位和库房和水厂id
+                apis.selectCountByshelfId(params).then(res => {
+                  if (res.status && res.data != 0) {
+                    this.$storage.set('isMaterialScan', 0)
+                    this.$storage.set('selectedOptionShelf', params.id)
+                    //查询出库位信息
+                    apis.selectShelfInfo(params).then(res => {
+                      if (res.status) {
+                        //存储库房水厂信息
+                        this.$storage.set('selectedOptionLocation', res.data.locationId)
+                        this.$storage.set('selectedOptionWarehouse', res.data.warehouseId)
+
+                        //跳转物资显示页面，显示货架的全部物资信息
+                        // 跳转到物资设置出库数量页面
+                        this.$router.push({
+                          path: '/material/outWarehouseMaterialList'
+                        })
+                      }
+                    })
+                  } else {
+                    //判断是否为物资条码
+                    apis.selectMaterialCount(params).then(res => {
+                      if (res.status && res.data != 0) {
+                        //跳转物资显示页面，显示订单入库记录表的物资数量
+                        this.$storage.set('isMaterialScan', 1)
+                        this.$storage.set('selectedOptionMaterial', params.id)
+                        // this.$storage.set('selectedOptionWarehouse', '1778601350805184514')
+                        this.$router.push({
+                          path: '/material/outWarehouseMaterialList'
+                        })
+                      } else {
+                        Toast('请扫描库房，库位或物资条码！')
+                      }
+                    })
+                  }
+                })
+              }
+            })
           })
-        })
-      } else {
-        Toast('扫码异常')
-      }
+        } else {
+          Toast('扫码异常')
+        }
     },
     //点选出库，选择到具体的货架，查询出物资列表库存信息
     changeOutWarehouse() {
       this.show = true
-      //TODO 获取当前登录人所在的水厂，查询水厂下包含的库房列表
+
       let params = {
-        warehouseId: '1778601350805184514'
+        ids: this.warehouseList
       }
       apis.getWarehouseThierarchy(params).then(res => {
         if (res.status) {
@@ -202,9 +208,17 @@ export default {
 
     //保存选择的位置，并跳转到物资列表页面
     onFinish({ selectedOptions }) {
-      this.$storage.set('selectedOptionShelf', selectedOptions[2].value)
+
+      this.$storage.remove('selectedOptionShelf')
+      this.$storage.remove('selectedOptionLocation')
+      this.$storage.remove('selectedOptionWarehouse')
+      this.$storage.remove('selectedOptionMaterial')
+      this.$storage.remove('isMaterialScan')
+
       this.$storage.set('selectedOptionWarehouse', selectedOptions[0].value)
       this.$storage.set('selectedOptionLocation', selectedOptions[1].value)
+      this.$storage.set('selectedOptionShelf', selectedOptions[2].value)
+      this.$storage.set('isMaterialScan','0')
 
       this.show = false
       this.fieldValue = selectedOptions.map((option) => option.text).join('/')
@@ -226,8 +240,7 @@ export default {
         size: 9999,
         //已下发状态盘库信息
         state: 'make_warehouse_issue',
-        warehouseNameId: '',//todo 根据登录人映射
-        makeWarehouseName: ''
+        ids: this.warehouseList
       }
 
       apis.queryMakeWarehouseList(params).then(res => {

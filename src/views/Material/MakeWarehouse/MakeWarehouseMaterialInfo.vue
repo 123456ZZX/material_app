@@ -2,8 +2,6 @@
   <div class='main'>
     <fm-nav-bar title='设置实盘数量' left-arrow @click-left='goBack' />
     <fm-form validate-first class='form-container'>
-<!--      <fm-button class='button-style' @click='scan'>yuanchu扫码</fm-button>-->
-<!--      <fm-button class='button-style' @click='san2'>fawkes扫码</fm-button>-->
       <fm-field
         v-model='makeWarehouseInfoForm.materialName'
         name='materialName'
@@ -71,7 +69,6 @@
         v-model='makeWarehouseInfoForm.practicalCount'
         name='inWarehouseCount'
         label='实盘数量'
-        type='tel'
         required
         input-align='right'
         placeholder='请输入实盘数量'
@@ -154,23 +151,6 @@ export default {
         }
       })
     },
-    //扫码
-    scan() {
-      if (typeof yuanchu != 'undefined') {
-        yuanchu.scanner.openScanner((res) => {
-          alert(res)
-          alert(res === '111')
-        })
-      } else {
-
-      }
-    },
-    san2() {
-      fawkes.plugins.scanner.openScanner((res) => {
-          alert(res)
-          alert(res === '111')
-      });
-    },
   }
 }
 </script>
@@ -179,7 +159,7 @@ export default {
 .form-container {
   height: calc(100% - 46px);
   overflow-y: scroll;
-  margin-top: 40px; /* 增加顶部内边距 */
+  //margin-top: 40px; /* 增加顶部内边距 */
 }
 
 .button-style {

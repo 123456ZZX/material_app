@@ -6,7 +6,6 @@
         v-model='checkInfoForm.checkId'
         name='checkId'
         label='验收单编号'
-        type='tel'
         required
         disabled
         input-align='right'
@@ -16,7 +15,6 @@
         v-model='checkInfoForm.materialName'
         name='materialName'
         label='物资名称'
-        type='tel'
         required
         disabled
         input-align='right'
@@ -26,7 +24,6 @@
         v-model='checkInfoForm.manageTypeName'
         name='manageTypeName'
         label='管理类别'
-        type='tel'
         required
         disabled
         input-align='right'
@@ -46,7 +43,6 @@
         v-model='checkInfoForm.specifications'
         name='specifications'
         label='物资规格'
-        type='tel'
         required
         disabled
         input-align='right'
@@ -56,7 +52,6 @@
         v-model='checkInfoForm.settlementUnit'
         name='settlementUnit'
         label='单位'
-        type='tel'
         required
         disabled
         input-align='right'
@@ -66,7 +61,6 @@
         v-model='checkInfoForm.expirationDate'
         name='expirationDate'
         label='保质期'
-        type='tel'
         required
         disabled
         input-align='right'
@@ -76,7 +70,6 @@
         v-model='checkInfoForm.buyNumber'
         name='buyNumber'
         label='购买数量'
-        type='tel'
         required
         disabled
         input-align='right'
@@ -86,7 +79,6 @@
         v-model='checkInfoForm.price'
         name='price'
         label='购买单价(元)'
-        type='tel'
         required
         disabled
         input-align='right'
@@ -111,7 +103,6 @@
         v-model='checkInfoForm.deliveryNumber'
         name='deliveryNumber'
         label='验收数量'
-        type='tel'
         required
         input-align='right'
         placeholder='请输入验收数量'
@@ -144,10 +135,10 @@ export default {
   data() {
     return {
       checkInfoForm: {
-        id: '',
-        warehouseName: '',
-        suppilerName: '',
-        createDate: '',
+        // id: '',
+        // warehouseName: '',
+        // suppilerName: '',
+        // createDate: '',
         // examineResult: '合格',
         // checkResult: '合格',
         // contractCheckOpinion: '一致',
@@ -170,6 +161,7 @@ export default {
   created() {
     let params = {
       id: this.$storage.get('checkMaterialId')
+      // this.$storage.set('checkMaterialId')
     }
     // 查询验收单的物资详情
     apis.selectCheckMaterialInfo(params).then(res => {
@@ -209,7 +201,8 @@ export default {
         checkCount: this.checkInfoForm.deliveryNumber,
         buyNumber: this.checkInfoForm.buyNumber,
         checkId: this.checkInfoForm.checkId,
-        qualityExamine: this.checkInfoForm.qualityExamine
+        qualityExamine: this.checkInfoForm.qualityExamine,
+        price: this.checkInfoForm.price
       }
       apis.saveMaterialCheckResult(params).then(res => {
         if (res.status) {
@@ -233,7 +226,7 @@ export default {
 .form-container {
   height: calc(100% - 46px);
   overflow-y: scroll;
-  margin-top: 40px; /* 增加顶部内边距 */
+  //margin-top: 40px; /* 增加顶部内边距 */
 }
 
 

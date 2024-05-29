@@ -9,7 +9,6 @@
           <!-- 下拉刷新 -->
           <fm-pull-refresh v-model="refreshing" success-text="刷新成功" @refresh="onRefresh">
 
-<!--            <fm-button class='batchCheck-button' @click='batchCheck'>批量验收</fm-button>-->
             <!-- 无数据 -->
             <template v-if="checkMaterialList.length == 0 && !loading">
               <div class="no-data-img">
@@ -209,13 +208,6 @@ export default {
       height: 88px;
     }
   }
-}
-
-.batchCheck-button {
-  height: 80px;
-  width: 80%;
-  margin: 20px auto 0; /* 设置左右外边距为auto，实现水平居中 */
-  display: block; /* 确保按钮以块级元素显示 */
 }
 /* 暂无数据begin */
 .no-data-img {

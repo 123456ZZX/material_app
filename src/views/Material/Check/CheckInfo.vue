@@ -229,6 +229,7 @@ export default {
     },
   },
   created() {
+
     let params = {
       //验收单id
       id: this.$storage.get('checkInfo')
@@ -318,10 +319,10 @@ export default {
 
 <style scoped lang='less'>
 .form-container {
-  height: calc(100% - 300px);
+  height: calc(100% - 240px);
   //height: 100%;
   overflow-y: scroll;
-  margin-top: 40px; /* 增加顶部内边距 */
+  //margin-top: 40px; /* 增加顶部内边距 */
 }
 
 

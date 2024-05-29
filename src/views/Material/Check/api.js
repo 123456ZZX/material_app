@@ -11,6 +11,17 @@ export function batchCheck(params) {
     params: params
   })
 }
+/**
+ * 根据userid查询用户信息
+ * @param id
+ */
+export function selectUserInfoByUserId(id) {
+  return request({
+    url: '/xasw-material/second/user/selectUserInfoByUserId/'+id,
+    method: 'get',
+  })
+}
+
 
 
 

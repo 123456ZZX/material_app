@@ -80,6 +80,7 @@ export default {
 
     // 页面加载/下拉刷新
     onRefresh() {
+
       // this.loading = true
       this.finished = false
       this.getList()
@@ -94,7 +95,7 @@ export default {
           //扫库房：水厂id，库房id  扫库位：水厂，库房，库位
           shelfId: this.$storage.get('selectedOptionShelf'),
           locationId: this.$storage.get('selectedOptionLocation'),
-          warehouseId: this.$storage.get('selectedOptionWarehouse')
+          warehouseId: this.$storage.get('selectedOptionWarehouse'),
         }
         apis.getOutWarehouseMaterialList(params).then(res => {
           if (res.status) {
@@ -108,7 +109,23 @@ export default {
           this.loading = false
         })
       } else {
-        //扫描物资条码执行查询
+        console.log(this.$storage.get('userWarehouseIds'))
+        //扫描物资条码执行查询，扫物资：物资id，水厂id
+        let params={
+          materialId: this.$storage.get('selectedOptionMaterial'),
+          ids: this.$storage.get('userWarehouseIds')
+        }
+        apis.getOutWarehouseMaterialList(params).then(res => {
+          if (res.status) {
+            this.OutWarehouseMaterialList = res.data
+            this.refreshing = false
+            this.finished = true
+          }
+        }).finally(() => {
+          this.toast.close()
+          this.toast = null
+          this.loading = false
+        })
       }
     }
   }

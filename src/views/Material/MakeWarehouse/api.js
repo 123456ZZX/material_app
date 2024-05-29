@@ -1,5 +1,17 @@
 import request from '@/utils/request'
 
+/**
+ * 根据userid查询用户信息
+ * @param id
+ */
+export function selectUserInfoByUserId(id) {
+  return request({
+    url: '/xasw-material/second/user/selectUserInfoByUserId/'+id,
+    method: 'get',
+  })
+}
+
+
 
 /**
  * 设置盘库物资的实盘数量

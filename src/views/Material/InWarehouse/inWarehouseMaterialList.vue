@@ -141,7 +141,7 @@ export default {
       }
       apis.getCheckMaterialList(params).then(res=>{
         if(res.status){
-          this.inWarehouseMaterialList = res.data.filter(item => item.checkDetailState !== 'in_warehouse');
+          this.inWarehouseMaterialList = res.data.filter(item => item.checkDetailState !== 'in_warehouse' && item.checkDetailState !=='wait_check');
           this.refreshing=false;
           this.finished=true
         }
@@ -206,21 +206,15 @@ export default {
         return;
       }
       this.show=true;
-      //TODO 获取当前登录人所在的水厂
+      //TODO 获取当前登录人所在的水厂查询水厂的存储结构
       let params= {
-        warehouseId: '1778601350805184514'
+        ids: this.$storage.get('inWarehouseIds')
       }
       apis.getWarehouseThierarchy(params).then(res=>{
         if(res.status){
           this.options= res.data
         }
       })
-    //   Dialog.confirm({
-    //     title: '批量入库',
-    //     message: '批量入库会按照验收的数量，对选中的物资批量入库，您确定吗？'
-    //   }).then(() => {
-    //
-    //   })
     },
     //保存选择的位置，弹出提示框确定
     onFinish({ selectedOptions }) {

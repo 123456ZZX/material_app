@@ -126,7 +126,8 @@ export function selectByshelfId(params) {
  */
 export function getWarehouseThierarchy(params) {
   return request({
-    url: `${baseUrl}/second/warehouse/getWarehouseThierarchy/`+params.warehouseId,
+    url: `${baseUrl}/second/warehouse/getWarehouseThierarchy`,
     method: 'get',
+    params: params
   })
 }
