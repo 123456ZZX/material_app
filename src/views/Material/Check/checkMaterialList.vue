@@ -29,7 +29,7 @@
               :offset="0"
             >
               <div>
-                <div v-for="(item, index) in checkMaterialList" :key="index">
+                <div style='padding-top: 5px'v-for="(item, index) in checkMaterialList" :key="index">
                   <CheckMaterialCardEle :checkMaterialInfo="item" @execute="execute(item)"></CheckMaterialCardEle>
                 </div>
               </div>

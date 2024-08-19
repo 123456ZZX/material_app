@@ -1,6 +1,48 @@
 const baseUrl = '/xasw-material'
 import request from '@/utils/request'
 
+
+/**
+ * 生成唯一id
+ * @returns {string}
+ */
+export const generateUUID = () => {
+  var d = new Date().getTime();
+  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = (d + Math.random()*16)%16 | 0;
+    d = Math.floor(d/16);
+    return (c=='x' ? r : (r&0x7|0x8)).toString(16);
+  });
+  return uuid;
+}
+
+
+//上传文件 form data格式
+export function uploadFile (data) {
+  return request({
+    url: '/sys-storage/upload',
+    method: 'post',
+    data,
+    timeout: 0
+  })
+}
+
+
+/**
+ * 文件上传结果保存
+ * @param params
+ * @returns {*}
+ */
+export function insert(params) {
+  return request({
+    url: '/xasw-material/second/sign',
+    method: 'post',
+    data: params
+  })
+}
+
+
+
 /**
  * 批量验收物资
  */

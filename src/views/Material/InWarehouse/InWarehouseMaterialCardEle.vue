@@ -62,7 +62,7 @@ export default {
 </script>
 
 
-<style scoped lang='less' scoped>
+<style lang='less' scoped>
 .InfoCard {
   display: flex;
   flex-direction: column;

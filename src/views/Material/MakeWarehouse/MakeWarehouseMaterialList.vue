@@ -27,7 +27,7 @@
               :offset="0"
             >
               <div>
-                <div v-for="(item, index) in makeWarehouseMaterialList" :key="index">
+                <div style='padding-top: 5px' v-for="(item, index) in makeWarehouseMaterialList" :key="index">
                   <MakeWarehouseMaterialCardEle :makeWarehouseMaterialInfo="item"></MakeWarehouseMaterialCardEle>
                 </div>
               </div>
@@ -90,7 +90,7 @@ export default {
       apis.getMakeWarehouseMaterialList(params).then(res=>{
         if(res.status){
           //过滤掉已经盘库完成的盘库信息
-          this.makeWarehouseMaterialList = res.data.filter(item => item.result == null);
+          this.makeWarehouseMaterialList = res.data.filter(item => item.result==="" ||item.result == null);
           // this.makeWarehouseMaterialList = res.data;
           this.refreshing=false;
           this.finished=true

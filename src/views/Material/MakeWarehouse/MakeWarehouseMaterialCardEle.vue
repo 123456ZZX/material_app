@@ -9,6 +9,16 @@
     <div class="bottomSide">
       <div class="commonStyle">
         <img src='../../../assets/img/material/placeOrder.png' alt="" />
+        <div class="titleText">库房:</div>
+        <span class="taskStartTime">{{makeWarehouseMaterialInfo.locationName}}</span>
+      </div>
+      <div class="commonStyle">
+        <img src='../../../assets/img/material/placeOrder.png' alt="" />
+        <div class="titleText">库位:</div>
+        <span class="taskStartTime">{{makeWarehouseMaterialInfo.shelfName}}</span>
+      </div>
+      <div class="commonStyle">
+        <img src='../../../assets/img/material/placeOrder.png' alt="" />
         <div class="titleText">物资类别:</div>
         <span class="taskStartTime">{{makeWarehouseMaterialInfo.materialTypeName}}</span>
       </div>
@@ -56,14 +66,15 @@ export default {
 </script>
 
 
-<style scoped lang='less' scoped>
+<style lang='less' scoped>
 .InfoCard {
+  padding-top: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
   width: 690px;
-  height: 284px;
+  height: 350px;
   margin: 24px auto;
   border-radius: 16px;
   box-shadow: 0px 4px 16px 0px rgba(104, 115, 127, 0.06);

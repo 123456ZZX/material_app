@@ -8,6 +8,17 @@
     </div>
     <div class="bottomSide">
       <div class="commonStyle">
+        <img src='../../../assets/img/material/supplier.png' alt="" />
+        <div class="titleText">库房:</div>
+        <span class="taskStartTime">{{outWarehouseMaterialInfo.locationName}}</span>
+      </div>
+
+      <div class="commonStyle keyPoint">
+        <img src='../../../assets/img/material/supplier.png' alt="" />
+        <div class="titleText">库位:</div>
+        <span class="taskStartTime">{{outWarehouseMaterialInfo.shelfName}}</span>
+      </div>
+      <div class="commonStyle">
         <img src='../../../assets/img/material/placeOrder.png' alt="" />
         <div class="titleText">物资类别:</div>
         <span class="taskStartTime">{{outWarehouseMaterialInfo.materialTypeName}}</span>
@@ -22,20 +33,10 @@
         <div class="titleText">物资库存:</div>
         <span class="taskStartTime">{{outWarehouseMaterialInfo.totalNumber}}</span>
       </div>
-      <div class="commonStyle">
-        <img src='../../../assets/img/material/supplier.png' alt="" />
-        <div class="titleText">库房:</div>
-        <span class="taskStartTime">{{outWarehouseMaterialInfo.locationName}}</span>
-      </div>
 
-      <div class="commonStyle keyPoint">
-        <img src='../../../assets/img/material/supplier.png' alt="" />
-        <div class="titleText">库位:</div>
-        <span class="taskStartTime">{{outWarehouseMaterialInfo.shelfName}}</span>
-      </div>
     </div>
     <div class="twoButton">
-      <div @click="materialOutWarehouse(outWarehouseMaterialInfo.materialId)">出库</div>
+      <fm-button class='button_sty' @click="materialOutWarehouse(outWarehouseMaterialInfo.materialId)">出库</fm-button>
     </div>
   </div>
 </template>
@@ -74,15 +75,16 @@ export default {
 </script>
 
 
-<style scoped lang='less' scoped>
+<style lang='less' scoped>
 .InfoCard {
+  padding-top: 5px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
   width: 690px;
-  height: 284px;
-  margin: 24px auto;
+  height: 350px;
+  margin: auto auto;
   border-radius: 16px;
   box-shadow: 0px 4px 16px 0px rgba(104, 115, 127, 0.06);
   background-color: rgb(255, 255, 255);
@@ -137,6 +139,14 @@ export default {
     color: #1b67d8;
     font-family: PingFangSC-Semibold, PingFang SC;
     background-color: #eee;
+  }
+
+  .button_sty {
+    margin-top: 13px;
+    background-color: #2062c4;
+    color: white;
+    height: 100%;
+    width: 100%;
   }
 
   .bottomSide {

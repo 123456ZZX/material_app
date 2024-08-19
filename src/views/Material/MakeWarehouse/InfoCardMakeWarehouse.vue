@@ -24,7 +24,7 @@
             :offset="0"
           >
             <div>
-              <div v-for="(item, index) in makeWarehouseList" :key="index">
+              <div style='padding-top: 5px' v-for="(item, index) in makeWarehouseList" :key="index">
                 <MakeWarehouseCardEle :makeWarehouseInfo="item"></MakeWarehouseCardEle>
               </div>
             </div>

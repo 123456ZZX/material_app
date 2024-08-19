@@ -23,7 +23,7 @@
             :offset="0"
           >
             <div>
-              <div v-for="(item, index) in checkList" :key="index">
+              <div style='padding-top: 5px' v-for="(item, index) in checkList" :key="index">
                 <InWarehouseCardEle :inWarehouseInfo="item"></InWarehouseCardEle>
               </div>
             </div>

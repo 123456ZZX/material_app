@@ -27,7 +27,7 @@
               :offset='0'
             >
               <div>
-                <div v-for='(item, index) in OutWarehouseMaterialList' :key='index'>
+                <div style='padding-top: 25px' v-for='(item, index) in OutWarehouseMaterialList' :key='index'>
                   <OutWarehouseMaterialCardEle
                     :outWarehouseMaterialInfo='item'></OutWarehouseMaterialCardEle>
                 </div>
